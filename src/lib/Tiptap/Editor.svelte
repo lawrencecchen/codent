@@ -51,6 +51,9 @@
 			editor.destroy();
 		}
 	});
+	let className = '';
+
+	export { className as class };
 </script>
 
 <!-- {#if editor}
@@ -76,7 +79,7 @@
 
 <div
 	bind:this={element}
-	class="h-full w-full max-w-prose prose mx-auto outline-none p-4 focus:outline-none active:ring-0"
+	class="h-full w-full max-w-prose prose mx-auto outline-none p-4 focus:outline-none active:ring-0 {className}"
 />
 
 <style>
@@ -86,6 +89,7 @@
 	} */
 	:global(.ProseMirror) {
 		padding: 1rem;
+		min-height: 100%;
 	}
 	:global(.ProseMirror):focus {
 		outline: none;

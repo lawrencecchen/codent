@@ -4,6 +4,7 @@ specifiers:
   '@fontsource/fira-mono': ^4.2.2
   '@lukeed/uuid': ^2.0.0
   '@supabase/supabase-js': ^1.21.0
+  '@sveltejs/adapter-vercel': ^1.0.0-next.27
   '@sveltejs/kit': next
   '@tailwindcss/forms': ^0.3.3
   '@tailwindcss/line-clamp': ^0.2.1
@@ -20,6 +21,8 @@ specifiers:
   eslint: ^7.22.0
   eslint-config-prettier: ^8.1.0
   eslint-plugin-svelte3: ^3.2.0
+  lib0: ^0.2.42
+  monaco-editor: ^0.26.1
   postcss: ^8.3.6
   prettier: ~2.2.1
   prettier-plugin-svelte: ^2.2.0
@@ -29,6 +32,8 @@ specifiers:
   tailwindcss: ^2.2.7
   tslib: ^2.0.0
   typescript: ^4.0.0
+  y-monaco: ^0.1.2
+  y-protocols: ^1.0.5
   y-websocket: ^1.3.16
   yjs: ^13.5.12
 
@@ -39,13 +44,14 @@ dependencies:
 
 devDependencies:
   '@supabase/supabase-js': 1.21.0
+  '@sveltejs/adapter-vercel': 1.0.0-next.27
   '@sveltejs/kit': 1.0.0-next.142_svelte@3.42.1
   '@tailwindcss/forms': 0.3.3_tailwindcss@2.2.7
   '@tailwindcss/line-clamp': 0.2.1_tailwindcss@2.2.7
   '@tailwindcss/typography': 0.4.1_tailwindcss@2.2.7
   '@tiptap/core': 2.0.0-beta.93
-  '@tiptap/extension-collaboration': 2.0.0-beta.20_a393ee9cc9ab30a58c4b345f7fe11857
-  '@tiptap/extension-collaboration-cursor': 2.0.0-beta.21_a393ee9cc9ab30a58c4b345f7fe11857
+  '@tiptap/extension-collaboration': 2.0.0-beta.20_83b49f714484c80ea1c4a51615b74bbd
+  '@tiptap/extension-collaboration-cursor': 2.0.0-beta.21_83b49f714484c80ea1c4a51615b74bbd
   '@tiptap/starter-kit': 2.0.0-beta.89
   '@types/cookie': 0.4.1
   '@typescript-eslint/eslint-plugin': 4.29.0_48ea228fa0647506aa803d17f48b59f7
@@ -54,6 +60,8 @@ devDependencies:
   eslint: 7.32.0
   eslint-config-prettier: 8.3.0_eslint@7.32.0
   eslint-plugin-svelte3: 3.2.0_eslint@7.32.0+svelte@3.42.1
+  lib0: 0.2.42
+  monaco-editor: 0.26.1
   postcss: 8.3.6
   prettier: 2.2.1
   prettier-plugin-svelte: 2.3.1_prettier@2.2.1+svelte@3.42.1
@@ -63,6 +71,8 @@ devDependencies:
   tailwindcss: 2.2.7_7b69a43ec4689fa7484dee35f79a7806
   tslib: 2.3.0
   typescript: 4.3.5
+  y-monaco: 0.1.2_d76b70939abd174924de28d5f1b88c8c
+  y-protocols: 1.0.5
   y-websocket: 1.3.16_yjs@13.5.12
   yjs: 13.5.12
 
@@ -206,6 +216,12 @@ packages:
       '@supabase/storage-js': 1.4.0
     dev: true
 
+  /@sveltejs/adapter-vercel/1.0.0-next.27:
+    resolution: {integrity: sha512-KiGDJXgjkj3MJvmQLXpE7pfQnN7dVx8pPgqcrFp8yziFrLMrvluklKmNqNei6JivQn5JVYxLojRgHpik1fdIOw==}
+    dependencies:
+      esbuild: 0.12.18
+    dev: true
+
   /@sveltejs/kit/1.0.0-next.142_svelte@3.42.1:
     resolution: {integrity: sha512-MxoQz/kxlYOXVHETlxh8+wIvfZ4N2EScDqyuaWwFHqWg6fj6FHADJfZ7JCniqvAe8ME2jA9Om/gVR8e1oY04+w==}
     engines: {node: ^12.20 || >=14.13}
@@ -339,13 +355,13 @@ packages:
       '@tiptap/core': 2.0.0-beta.93
     dev: true
 
-  /@tiptap/extension-collaboration-cursor/2.0.0-beta.21_a393ee9cc9ab30a58c4b345f7fe11857:
+  /@tiptap/extension-collaboration-cursor/2.0.0-beta.21_83b49f714484c80ea1c4a51615b74bbd:
     resolution: {integrity: sha512-7wF5BLRF08tcOqc4kXswgtuNXm2HD+3WauwsV22969YN6mFepzyw4NeKd4VYsTKy+cTAkGyTThRflxkW4aaamA==}
     peerDependencies:
       '@tiptap/core': ^2.0.0-beta.1
     dependencies:
       '@tiptap/core': 2.0.0-beta.93
-      y-prosemirror: 1.0.9_yjs@13.5.12
+      y-prosemirror: 1.0.9_y-protocols@1.0.5+yjs@13.5.12
     transitivePeerDependencies:
       - prosemirror-model
       - prosemirror-state
@@ -354,13 +370,13 @@ packages:
       - yjs
     dev: true
 
-  /@tiptap/extension-collaboration/2.0.0-beta.20_a393ee9cc9ab30a58c4b345f7fe11857:
+  /@tiptap/extension-collaboration/2.0.0-beta.20_83b49f714484c80ea1c4a51615b74bbd:
     resolution: {integrity: sha512-Z9Ygk19Lt5EG+8IztsyaBgWxUx5d0VEK61eBbkXp3wlahBkU62zI7N0ywGb/Ju9s2wk89YxnYMuEID4VeinZ6Q==}
     peerDependencies:
       '@tiptap/core': ^2.0.0-beta.1
     dependencies:
       '@tiptap/core': 2.0.0-beta.93
-      y-prosemirror: 1.0.9_yjs@13.5.12
+      y-prosemirror: 1.0.9_y-protocols@1.0.5+yjs@13.5.12
     transitivePeerDependencies:
       - prosemirror-model
       - prosemirror-state
@@ -1913,6 +1929,10 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  /monaco-editor/0.26.1:
+    resolution: {integrity: sha512-mm45nUrBDk0DgZKgbD7+bhDOtcAFNGPJJRAdS6Su1kTGl6XEgC7U3xOmDUW/0RrLf+jlvCGaqLvD4p2VjwuwwQ==}
+    dev: true
+
   /mri/1.1.6:
     resolution: {integrity: sha512-oi1b3MfbyGa7FJMP9GmLTttni5JoICpYBRlq+x5V16fZbLsnL9N3wFqqIm/nIG43FjUFkFh9Epzp/kzUGUnJxQ==}
     engines: {node: '>=4'}
@@ -2763,7 +2783,20 @@ packages:
     dev: true
     optional: true
 
-  /y-prosemirror/1.0.9_yjs@13.5.12:
+  /y-monaco/0.1.2_d76b70939abd174924de28d5f1b88c8c:
+    resolution: {integrity: sha512-8VkmPsSbj4JZlLW8/su1O4ULZEGeS22VAvAXawpHlh2BoyeNy5AIwSl5eam+soEuyWHpktQSmxYOBOvQuu6mpQ==}
+    peerDependencies:
+      monaco-editor: '>=0.20.0'
+      y-protocols: '>=1.0.1'
+      yjs: ^13.3.1 && >=13.3.1
+    dependencies:
+      lib0: 0.2.42
+      monaco-editor: 0.26.1
+      y-protocols: 1.0.5
+      yjs: 13.5.12
+    dev: true
+
+  /y-prosemirror/1.0.9_y-protocols@1.0.5+yjs@13.5.12:
     resolution: {integrity: sha512-OM12aPx04lwiIy1IOBidb6ONAof2KFxQE/Gww26SEsMQuA2dibrJkjaMwXwY1KnYY7yOpwbIFRdwecdNXLU9yQ==}
     peerDependencies:
       prosemirror-model: ^1.7.1
@@ -2773,6 +2806,7 @@ packages:
       yjs: ^13.3.2
     dependencies:
       lib0: 0.2.42
+      y-protocols: 1.0.5
       yjs: 13.5.12
     dev: true
 
