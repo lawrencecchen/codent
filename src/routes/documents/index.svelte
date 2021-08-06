@@ -18,7 +18,7 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import supabase from '$lib/supabase';
+	import { supabase } from '$lib/supabase';
 
 	export let documents;
 

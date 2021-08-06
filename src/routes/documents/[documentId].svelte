@@ -2,7 +2,7 @@
 	export const ssr = false;
 
 	import type { Load } from '@sveltejs/kit';
-	import supabase from '$lib/supabase';
+	import { supabase } from '$lib/supabase';
 	import Editor from '$lib/Tiptap/Editor.svelte';
 
 	export const load: Load = async ({ page, fetch, session, context }) => {
