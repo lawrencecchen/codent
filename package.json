@@ -12,6 +12,8 @@
 		"yjs-ws": "HOST=localhost PORT=1234 CALLBACK_URL=http://localhost:3000/documents/update CALLBACK_OBJECTS='{\"annotations\":\"Map\"}' YPERSISTENCE=./dbDir node ./node_modules/y-websocket/bin/server.js"
 	},
 	"devDependencies": {
+		"@rollup/plugin-commonjs": "^20.0.0",
+		"@rollup/plugin-node-resolve": "^13.0.4",
 		"@supabase/supabase-js": "^1.21.0",
 		"@sveltejs/adapter-vercel": "^1.0.0-next.27",
 		"@sveltejs/kit": "next",

@@ -12,6 +12,12 @@ const config = {
 		target: '#svelte',
 		adapter: vercel(),
 		vite: {
+			// optimizeDeps: {
+			// 	include: ['y-websocket', 'lib0']
+			// },
+			// build: {
+			// 	rollupOptions
+			// },
 			server: {
 				hmr: {
 					port: 3334

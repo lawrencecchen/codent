@@ -3,5 +3,7 @@ node_modules
 /build
 /.svelte-kit
 /package
+/.vercel_build_output
+dbDir
 
 .env

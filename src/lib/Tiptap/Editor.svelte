@@ -4,9 +4,12 @@
 	import Collaboration from '@tiptap/extension-collaboration';
 	import StarterKit from '@tiptap/starter-kit';
 	import * as Y from 'yjs';
-	import { WebsocketProvider } from 'y-websocket';
 	import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 	import { auth } from '$lib/stores/auth';
+
+	// Hacky stuff to make y-websocket work with Vite.
+	import * as pkg from '$lib/yjs/y-websocket';
+	const { WebsocketProvider } = pkg;
 
 	export let documentId: string;
 
