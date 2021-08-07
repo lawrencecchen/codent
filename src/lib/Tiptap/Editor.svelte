@@ -1,29 +1,30 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { Editor } from '@tiptap/core';
+	import type { Editor as EditorType } from '@tiptap/core';
 	import Collaboration from '@tiptap/extension-collaboration';
 	import StarterKit from '@tiptap/starter-kit';
 	import * as Y from 'yjs';
 	import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 	import { auth } from '$lib/stores/auth';
 
+	// import { WebsocketProvider } from '$lib/yjs/y-websocket';
 	// Hacky stuff to make y-websocket work with Vite.
-	import * as pkg from '$lib/yjs/y-websocket';
+	import * as pkg from 'y-websocket';
 	const { WebsocketProvider } = pkg;
 
 	export let documentId: string;
 
 	const colors = ['#f783ac', '#818CF8', '#A78BFA', '#F472B6'];
 	let element: HTMLDivElement;
-	let editor: Editor;
-	// A new Y document
-	const ydoc = new Y.Doc();
-	// Registered with a WebSocket provider
-	const provider = new WebsocketProvider('ws://127.0.0.1:1234', documentId, ydoc);
-	console.log(ydoc);
-	// console.log(ydoc.getMap('content'));
+	let editor;
 
-	onMount(() => {
+	onMount(async () => {
+		// const WebsocketProvider = (await import('y-websocket')).WebsocketProvider;
+		const ydoc = new Y.Doc();
+		const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL as string;
+		const provider = new WebsocketProvider(WEBSOCKET_URL, documentId, ydoc);
+
 		editor = new Editor({
 			element: element,
 			extensions: [

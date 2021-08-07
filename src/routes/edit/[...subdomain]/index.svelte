@@ -13,4 +13,6 @@
 
 <!-- <Monaco /> -->
 
-<Editor documentId={$page.path} class="min-h-screen" />
+{#key $page.path}
+	<Editor documentId={$page.path} class="min-h-screen" />
+{/key}

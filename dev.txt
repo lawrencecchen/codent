@@ -1,7 +1,7 @@
 Ports:
 3000
 3334 (vite)
-1234 (ws)
+1234 (ws)\
 24678
 
 https://github.com/sveltejs/kit/issues/1134
