@@ -2,6 +2,10 @@
 	import { setContext } from 'svelte';
 	import { key } from './key';
 	import type { Placement } from './placement';
+	import { clickoutside } from '$lib/utlis/clickoutside';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	let parentNode: HTMLDivElement;
 
@@ -17,6 +21,11 @@
 	export { className as class };
 </script>
 
-<div bind:this={parentNode} class={className}>
+<div
+	bind:this={parentNode}
+	class={className}
+	use:clickoutside
+	on:clickoutside={() => dispatch('close')}
+>
 	<slot />
 </div>

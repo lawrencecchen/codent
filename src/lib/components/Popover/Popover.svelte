@@ -33,17 +33,22 @@
 		let translateX = '0px';
 		let translateY = '0px';
 
-		if (position1 === 'bottom') {
-			top = parentRect.y + parentRect.height;
+		if (placement === 'right-start') {
+			top = parentRect.y;
+			left = parentRect.x + parentRect.width;
 		}
 
-		if (position2 === 'center') {
-			left = parentRect.x + parentRect.width / 2;
-			translateX = '-100%';
-		} else if (position2 === 'end') {
-			left = parentRect.x + parentRect.width;
-			translateX = '-100%';
-		}
+		// if (position1 === 'bottom') {
+		// 	top = parentRect.y + parentRect.height;
+		// }
+
+		// if (position2 === 'center') {
+		// 	left = parentRect.x + parentRect.width / 2;
+		// 	translateX = '-100%';
+		// } else if (position2 === 'end') {
+		// 	left = parentRect.x + parentRect.width;
+		// 	translateX = '-100%';
+		// }
 
 		return { top, left, width, height, translateX, translateY };
 	}

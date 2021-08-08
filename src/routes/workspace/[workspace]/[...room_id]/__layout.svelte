@@ -8,9 +8,9 @@
 		const { data: documents, error } = await supabase
 			.from('documents')
 			.select('*')
+			.match({ is_deleted: false })
 			.like('room_id', ilike)
 			.order('room_id');
-		// .match({ room_id: page.path });
 
 		if (documents) {
 			return {
@@ -31,6 +31,7 @@
 	import { clickoutside } from '$lib/utlis/clickoutside';
 	import { draggable } from '$lib/utlis/draggable';
 	import { onMount, tick } from 'svelte';
+	import PageLink from './_PageLink.svelte';
 	export let documents;
 
 	let originalSidebarWidth = 240;
@@ -68,7 +69,6 @@
 	// });
 
 	async function newPage(parentRoomId, newPageName) {
-		// const newPageName = prompt('New page name: ');
 		const room_id = `${parentRoomId}/${newPageName}`;
 		const { data, error } = await supabase.from('documents').insert({ room_id }).single();
 		if (!data) {
@@ -83,6 +83,12 @@
 		await newPage($page.path.split('/').slice(0, 3).join('/'), newPageName);
 		isCreatingNewPage = false;
 		newPageName = '';
+	}
+
+	async function enableCreateNewPageInput() {
+		isCreatingNewPage = true;
+		await tick();
+		newPageInputEl.focus();
 	}
 
 	let isCreatingNewPage = false;
@@ -108,11 +114,7 @@
 				Pages
 				<button
 					class="mr-0 ml-auto p-1 hover:bg-gray-300/50 border border-gray-300 rounded"
-					on:click|stopPropagation={async () => {
-						isCreatingNewPage = true;
-						await tick();
-						newPageInputEl.focus();
-					}}
+					on:click|stopPropagation={enableCreateNewPageInput}
 				>
 					<div class="sr-only">New page</div>
 					<svg
@@ -163,57 +165,8 @@
 					</form>
 				</li>
 			{/if}
-			{#each documents as { room_id }}
-				<li>
-					<a
-						href={room_id}
-						sveltekit:prefetch
-						class="h-7 py-1 pl-3 pr-2 text-sm text-gray-600 hover:bg-gray-100 flex items-center group relative {room_id ===
-						$page.path
-							? 'bg-gray-100 font-semibold text-black'
-							: ''}"
-					>
-						<div class="flex-grow overflow-hidden overflow-ellipsis whitespace-nowrap">
-							{room_id.split('/')[room_id.split('/').length - 1]}
-						</div>
-						<div class="ml-0.5 flex space-x-1">
-							<button
-								class="p-1 hidden group-hover:block hover:bg-gray-300/50 rounded"
-								on:click|preventDefault={() => console.log('lol')}
-							>
-								<div class="sr-only">New subpage</div>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-3 w-3 text-gray-700"
-									viewBox="0 0 20 20"
-									fill="currentColor"
-								>
-									<path
-										d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
-									/>
-								</svg>
-							</button>
-							<button
-								class="p-1 hidden group-hover:block hover:bg-gray-300/50 border border-gray-300 rounded"
-								on:click|preventDefault={() => newPage(room_id, 'test')}
-							>
-								<div class="sr-only">New subpage</div>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-3 w-3 text-gray-700"
-									viewBox="0 0 20 20"
-									fill="currentColor"
-								>
-									<path
-										fill-rule="evenodd"
-										d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-										clip-rule="evenodd"
-									/>
-								</svg>
-							</button>
-						</div>
-					</a>
-				</li>
+			{#each documents as document}
+				<PageLink {document} />
 			{/each}
 		</ul>
 
@@ -226,7 +179,7 @@
 		/>
 	</div>
 
-	<div class="h-full flex flex-col flex-grow">
+	<div class="h-full flex flex-col flex-grow relative">
 		<slot />
 	</div>
 </div>

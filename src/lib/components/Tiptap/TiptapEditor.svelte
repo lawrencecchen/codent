@@ -11,21 +11,22 @@
 	import { WebsocketProvider } from 'y-websocket';
 	// import { WebsocketProvider } from '$lib/yjs/y-websocket';
 	import { WEBSOCKET_URL } from '$lib/constants';
+	import { users as editorUsers } from './users.store';
 	// Hacky stuff to make y-websocket work with Vite.
 	// import * as pkg from 'y-websocket';
 	// const { WebsocketProvider } = pkg;
 
 	export let documentId: string;
-	export let wordCount: number = null;
+	// export let wordCount: number = null;
 
 	const colors = ['#f783ac', '#818CF8', '#A78BFA', '#F472B6'];
 	let element: HTMLDivElement;
 	let editor;
+	let provider;
 
 	onMount(async () => {
 		const ydoc = new Y.Doc();
-		// const WEBSOCKET_URL = 'ws://127.0.0.1:1234';
-		const provider = new WebsocketProvider(WEBSOCKET_URL, documentId, ydoc);
+		provider = new WebsocketProvider(WEBSOCKET_URL, documentId, ydoc);
 
 		editor = new Editor({
 			element: element,
@@ -42,6 +43,10 @@
 					user: {
 						name: $auth?.user?.email ?? 'Guest',
 						color: colors[Math.floor(Math.random() * colors.length)]
+					},
+					onUpdate: (users) => {
+						$editorUsers = users;
+						return null;
 					}
 				}),
 				Placeholder.configure({
@@ -62,6 +67,9 @@
 	onDestroy(() => {
 		if (editor) {
 			editor.destroy();
+		}
+		if (provider) {
+			provider.destroy();
 		}
 	});
 	let className = '';
