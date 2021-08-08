@@ -13,7 +13,11 @@
 
 <!-- <Monaco /> -->
 
-<div class=" w-full h-full">
+<div class="p-3 text-sm text-gray-600 xl:fixed xl:bg-transparent w-full">
+	{$page.path.replace('/workspace/', '')}
+</div>
+
+<div class="max-h-full overflow-auto flex-grow">
 	{#key $page.path}
 		<TiptapEditor documentId={$page.path} />
 	{/key}

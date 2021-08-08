@@ -1,8 +1,9 @@
 <script lang="ts" context="module">
+	export const ssr = false;
 	import type { Load } from '@sveltejs/kit';
 
 	export const load: Load = async ({ page, fetch, session, context }) => {
-		const ilike = `%${page.path.split('/').slice(0, 3).join('/')}%`;
+		const ilike = `%/workspace/${page.params.workspace}%`;
 
 		const { data: documents, error } = await supabase
 			.from('documents')
@@ -27,36 +28,73 @@
 	import { supabase } from '$lib/supabase';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import { clickoutside } from '$lib/utlis/clickoutside';
+	import { draggable } from '$lib/utlis/draggable';
+	import { onMount, tick } from 'svelte';
 	export let documents;
 
-	onMount(() => {
-		supabase
-			.from('documents')
-			.on('INSERT', (payload) => {
-				console.log(payload);
-				documents = [...documents, payload.new];
-			})
-			.subscribe();
-	});
+	let originalSidebarWidth = 240;
+	let sidebarWidth = originalSidebarWidth;
+	let minimumSidebarWidth = 190;
+	let maximumSidebarWidth = 400;
 
-	async function newPage(parentRoomId) {
-		const newPageName = prompt('New page name: ');
+	function dndmove(e) {
+		let dx = e.detail.x - e.detail.mousedownX;
+		if (dx > 0) {
+			sidebarWidth = Math.min(240 + dx, maximumSidebarWidth);
+		} else {
+			sidebarWidth = Math.max(240 + dx, minimumSidebarWidth);
+		}
+	}
+
+	function dndend() {
+		isResizingSidebar = false;
+		window.localStorage.setItem('sidebarWidth', String(sidebarWidth));
+	}
+	let isResizingSidebar = false;
+
+	function sortDocuments(documents) {
+		return documents.sort((a, b) => (a.room_id > b.room_id ? 1 : -1));
+	}
+
+	// onMount(() => {
+	// 	supabase
+	// 		.from('documents')
+	// 		.on('INSERT', (payload) => {
+	// 			console.log(payload);
+	// 			documents = sortDocuments([...documents, payload.new]);
+	// 		})
+	// 		.subscribe();
+	// });
+
+	async function newPage(parentRoomId, newPageName) {
+		// const newPageName = prompt('New page name: ');
 		const room_id = `${parentRoomId}/${newPageName}`;
 		const { data, error } = await supabase.from('documents').insert({ room_id }).single();
 		if (!data) {
 			alert('name already taken');
 			return console.log(error);
 		}
-		goto(data.room_id);
+		await goto(data.room_id);
+		documents = sortDocuments([...documents, data]);
 	}
+
+	async function submit() {
+		await newPage($page.path.split('/').slice(0, 3).join('/'), newPageName);
+		isCreatingNewPage = false;
+		newPageName = '';
+	}
+
+	let isCreatingNewPage = false;
+	let newPageInputEl: HTMLInputElement;
+	let newPageName = '';
 </script>
 
 <div class="flex h-screen">
-	<div class="flex flex-col py-3 border-r bg-gray-50/30 w-[240px]">
+	<div class="relative flex flex-col py-3 border-r bg-gray-50/30" style="width: {sidebarWidth}px;">
 		<div class="flex items-baseline px-3">
 			<div
-				class="mr-2 bg-indigo-600 rounded-md w-5 h-5 grid place-items-center text-white text-xs font-medium uppercase"
+				class="mr-2 bg-indigo-600 rounded-md w-5 h-5 flex-shrink-0 grid place-items-center text-white text-xs font-medium uppercase"
 			>
 				{$auth?.user?.email?.[0]}
 			</div>
@@ -66,11 +104,15 @@
 		</div>
 
 		<div class="mt-4 mb-1">
-			<div class="font-bold text-gray-500/80 pl-3 pr-2 text-sm flex items-center">
+			<div class="font-bold text-gray-500/80 pl-3 pr-2 text-xs flex items-center">
 				Pages
 				<button
 					class="mr-0 ml-auto p-1 hover:bg-gray-300/50 border border-gray-300 rounded"
-					on:click|stopPropagation={() => newPage($page.path.split('/').slice(0, 3).join('/'))}
+					on:click|stopPropagation={async () => {
+						isCreatingNewPage = true;
+						await tick();
+						newPageInputEl.focus();
+					}}
 				>
 					<div class="sr-only">New page</div>
 					<svg
@@ -106,7 +148,22 @@
 		</div>
 
 		<ul class="max-h-full overflow-auto">
-			{#each documents as { content, room_id }}
+			{#if isCreatingNewPage}
+				<li>
+					<form on:submit|preventDefault={submit}>
+						<input
+							use:clickoutside
+							on:clickoutside={() => (isCreatingNewPage = false)}
+							bind:value={newPageName}
+							bind:this={newPageInputEl}
+							type="text"
+							placeholder="Untitled page"
+							class="h-7 py-1 pl-3 w-full text-sm bg-white text-gray-800 border-gray-600 focus:border-gray-400 outline-none focus:ring-transparent placeholder-shown:font-medium"
+						/>
+					</form>
+				</li>
+			{/if}
+			{#each documents as { room_id }}
 				<li>
 					<a
 						href={room_id}
@@ -122,7 +179,7 @@
 						<div class="ml-0.5 flex space-x-1">
 							<button
 								class="p-1 hidden group-hover:block hover:bg-gray-300/50 rounded"
-								on:click|stopPropagation
+								on:click|preventDefault={() => console.log('lol')}
 							>
 								<div class="sr-only">New subpage</div>
 								<svg
@@ -138,7 +195,7 @@
 							</button>
 							<button
 								class="p-1 hidden group-hover:block hover:bg-gray-300/50 border border-gray-300 rounded"
-								on:click|stopPropagation={() => newPage(room_id)}
+								on:click|preventDefault={() => newPage(room_id, 'test')}
 							>
 								<div class="sr-only">New subpage</div>
 								<svg
@@ -159,13 +216,17 @@
 				</li>
 			{/each}
 		</ul>
+
+		<div
+			use:draggable
+			on:dndmove={dndmove}
+			on:dndstart={() => (isResizingSidebar = true)}
+			on:dndend={dndend}
+			class="absolute select-none w-[10px] h-full top-0 right-[-5px] cursor-[col-resize]"
+		/>
 	</div>
 
 	<div class="h-full flex flex-col flex-grow">
-		<div class="p-3 text-sm text-gray-600 xl:fixed xl:bg-transparent w-full">{$page.path}</div>
-
-		<div class="max-h-full overflow-auto flex-grow">
-			<slot />
-		</div>
+		<slot />
 	</div>
 </div>
