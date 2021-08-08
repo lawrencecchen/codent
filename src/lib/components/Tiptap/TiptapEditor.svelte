@@ -1,17 +1,14 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { Editor } from '@tiptap/core';
-	import type { Editor as EditorType } from '@tiptap/core';
 	import Collaboration from '@tiptap/extension-collaboration';
+	import Placeholder from '@tiptap/extension-placeholder';
 	import StarterKit from '@tiptap/starter-kit';
 	import * as Y from 'yjs';
 	import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 	import { auth } from '$lib/stores/auth';
-
-	// import { WebsocketProvider } from '$lib/yjs/y-websocket';
-	// Hacky stuff to make y-websocket work with Vite.
-	import * as pkg from 'y-websocket';
-	const { WebsocketProvider } = pkg;
+	import { WebsocketProvider } from '$lib/yjs/y-websocket';
+	import { WEBSOCKET_URL } from '$lib/constants';
 
 	export let documentId: string;
 
@@ -20,15 +17,16 @@
 	let editor;
 
 	onMount(async () => {
-		// const WebsocketProvider = (await import('y-websocket')).WebsocketProvider;
 		const ydoc = new Y.Doc();
-		const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL as string;
+		// const WEBSOCKET_URL = 'ws://127.0.0.1:1234';
 		const provider = new WebsocketProvider(WEBSOCKET_URL, documentId, ydoc);
 
 		editor = new Editor({
 			element: element,
 			extensions: [
-				StarterKit,
+				StarterKit.configure({
+					history: false
+				}),
 				Collaboration.configure({
 					document: ydoc,
 					field: 'content'
@@ -39,8 +37,10 @@
 						name: $auth?.user?.email ?? 'Guest',
 						color: colors[Math.floor(Math.random() * colors.length)]
 					}
+				}),
+				Placeholder.configure({
+					placeholder: 'Start writing...'
 				})
-				// …
 			],
 			content: '',
 			onTransaction: () => {
@@ -83,17 +83,20 @@
 
 <div
 	bind:this={element}
-	class="h-full w-full max-w-prose prose mx-auto outline-none p-4 focus:outline-none active:ring-0 {className}"
+	class="h-full w-full max-w-prose prose mx-auto active:ring-0 {className}"
 />
 
 <style>
-	/* button.active {
-		background: black;
-		color: white;
-	} */
 	:global(.ProseMirror) {
-		padding: 1rem;
+		padding: 3rem 1rem 3rem 1rem;
 		min-height: 100%;
+	}
+	:global(.ProseMirror p.is-editor-empty:first-child::before) {
+		content: attr(data-placeholder);
+		float: left;
+		color: #a9abad;
+		pointer-events: none;
+		height: 0;
 	}
 	:global(.ProseMirror):focus {
 		outline: none;

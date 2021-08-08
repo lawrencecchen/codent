@@ -1,22 +1,27 @@
+import { browser } from '$app/env';
 import { supabase } from '$lib/supabase';
-import type { AuthSession, AuthUser } from '@supabase/supabase-js';
-import type { Readable } from 'svelte/store';
-import { derived, readable } from 'svelte/store';
+import type { AuthSession } from '@supabase/supabase-js';
+import { readable, writable } from 'svelte/store';
+
+export const authLoading = writable(true);
 
 export const auth = readable<AuthSession>(null, (set) => {
-	const session = supabase.auth.session();
+	if (!browser) {
+		return null;
+	}
+	const authSession = supabase.auth.session();
 
-	if (session) {
-		set(session);
+	if (authSession) {
+		set(authSession);
+		authLoading.set(false);
 	}
 
-	const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
-		set(session);
+	const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, authSession) => {
+		set(authSession);
+		authLoading.set(false);
 	});
 
 	return () => {
 		authListener.unsubscribe();
 	};
 });
-
-export const user = derived<Readable<AuthSession>, AuthUser>(auth, ($auth) => $auth?.user);

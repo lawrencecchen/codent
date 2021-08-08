@@ -10,14 +10,14 @@ const config = {
 	kit: {
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
-		adapter: vercel(),
-		vite: {
-			server: {
-				hmr: {
-					port: 3334
-				}
-			}
-		}
+		adapter: vercel()
+		// vite: {
+		// 	server: {
+		// 		hmr: {
+		// 			port: 3334
+		// 		}
+		// 	}
+		// }
 	}
 };
 

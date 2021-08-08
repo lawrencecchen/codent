@@ -3,7 +3,7 @@
 
 	import type { Load } from '@sveltejs/kit';
 	import { supabase } from '$lib/supabase';
-	import Editor from '$lib/Tiptap/Editor.svelte';
+	import TiptapEditor from '$lib/components/Tiptap/TiptapEditor.svelte';
 
 	export const load: Load = async ({ page, fetch, session, context }) => {
 		const { data: document, error } = await supabase
@@ -28,4 +28,4 @@
 	export let document;
 </script>
 
-<Editor documentId={document.id} />
+<TiptapEditor documentId={document.id} />

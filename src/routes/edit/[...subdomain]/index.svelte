@@ -4,7 +4,7 @@
 
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Editor from '$lib/Tiptap/Editor.svelte';
+	import TiptapEditor from '$lib/components/Tiptap/TiptapEditor.svelte';
 </script>
 
 <svelte:head>
@@ -13,6 +13,8 @@
 
 <!-- <Monaco /> -->
 
-{#key $page.path}
-	<Editor documentId={$page.path} class="min-h-screen" />
-{/key}
+<div class=" w-full h-full">
+	{#key $page.path}
+		<TiptapEditor documentId={$page.path} />
+	{/key}
+</div>

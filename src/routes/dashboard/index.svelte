@@ -4,12 +4,10 @@
 
 <script lang="ts">
 	import { auth } from '$lib/stores/auth';
-
-	import TiptapEditor from '$lib/components/Tiptap/TiptapEditor.svelte';
 </script>
 
 <svelte:head>
-	<title>Codent</title>
+	<title>Dashboard</title>
 </svelte:head>
 
 {#if $auth}
@@ -17,5 +15,3 @@
 {:else}
 	<a href="/login">Sign in</a>
 {/if}
-<!-- <Monaco /> -->
-<TiptapEditor documentId="example-document" />
